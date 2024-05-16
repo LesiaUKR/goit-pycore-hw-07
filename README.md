@@ -1,135 +1,138 @@
-# MODULE 9. Homework. Basics of Working with Classes goit-pycore-hw-06
+# Theme 10. Homework. Advanced Object-Oriented Programming in Python goit-pycore-hw-07
 
-## Technical task
+### Final result
 
-## Develop a system for managing an address book.
+![screencapture](./assets/bot_work_example.jpg)
 
-### Entities:
+## Technical task description
 
-- **Field**: Base class for record fields.
-- **Name**: Class for storing contact names. A required field.
-- **Phone**: Class for storing phone numbers. Has format validation (10 digits).
-- **Record**: Class for storing contact information, including name and list of phones.
-- **AddressBook**: Class for storing and managing records.
+### Task 1
 
-### Functionality:
+First, let's add additional functionality to the classes from the previous homework:
 
-- **AddressBook:** Adding records.
-- **Searching** records by name.
-- **Deleting** records by name.
-- **Record:** Adding phones.
-- **Deleting** phones.
-- **Editing** phones.
-- **Searching** for a phone.
-
-### Recommendations for implementation
-
-As a starting point, you can take the following basic code to implement this homework assignment:
+- Add a birthday field to the Record class for the date of birth. This field should be of the Birthday class. This field is optional but can only be one.
 
 ```
-from collections import UserDict
-
-class Field:
-def init(self, value):
-self.value = value
-
-python
-Copy code
-def **str**(self):
-return str(self.value)
-class Name(Field):
-
-# implementation of the class
-
-pass
-
-class Phone(Field):
-
-# implementation of the class
-
-pass
+class Birthday(Field):
+def **init**(self, value):
+try: # Add data correctness check # and convert the string to a datetime object
+except ValueError:
+raise ValueError("Invalid date format. Use DD.MM.YYYY")
 
 class Record:
-def init(self, name):
+def **init**(self, name):
 self.name = Name(name)
 self.phones = []
-
-python
-Copy code
-
-# implementation of the class
-
-def **str**(self):
-return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
-class AddressBook(UserDict):
-
-# implementation of the class
-
-pass
+self.birthday = None
 ```
 
-After implementing your code, it should work as follows:
+- Add functionality for working with Birthday in the Record class, namely the add_birthday function, which adds a birthday to the contact.
+- Add functionality to check the correctness of the provided values for Phone and Birthday fields.
+- Add and adapt our function from the fourth homework assignment, week 3, get_upcoming_birthdays, to the AddressBook class, which returns a list of users who need to be greeted by birthday within the next week.
+
+Now your bot should work specifically with the functionality of the AddressBook class. This means that instead of the contacts dictionary, we use book = AddressBook().
+
+### Task 2
+
+To implement the new functionality, also add handler functions with the following commands:
+
+- **add-birthday** - add a birthday to the contact in the format DD.MM.YYYY.
+- **show-birthday** - display the birthday of the specified contact.
+- **birthdays** - show birthdays that will occur during the next week.
 
 ```
-Creating a new address book
-python
-Copy code
-book = AddressBook()
+@input_error
+def add_birthday(args, book): # implementation
 
-# Creating a record for John
+@input_error
+def show_birthday(args, book): # implementation
 
-john_record = Record("John")
-john_record.add_phone("1234567890")
-john_record.add_phone("5555555555")
-
-# Adding John's record to the address book
-
-book.add_record(john_record)
-
-# Creating and adding a new record for Jane
-
-jane_record = Record("Jane")
-jane_record.add_phone("9876543210")
-book.add_record(jane_record)
-
-# Printing all records in the book
-
-for name, record in book.data.items():
-print(record)
-
-# Finding and editing John's phone
-
-john = book.find("John")
-john.edit_phone("1234567890", "1112223333")
-
-print(john) # Output: Contact name: John, phones: 1112223333; 5555555555
-
-# Searching for a specific phone in John's record
-
-found_phone = john.find_phone("5555555555")
-print(f"{john.name}: {found_phone}") # Output: 5555555555
-
-# Deleting Jane's record
-
-book.delete("Jane")
+@input_error
+def birthdays(args, book): # implementation
 ```
 
-In the next homework assignment, we will add this logic to our bot.
+#### So in the end, our bot should support the following command list:
 
-## Assessment criteria
+1.  add [name] [phone]: Add a new contact with the name and phone number, or add a phone number to a contact that already exists.
+2.  change [name] [old phone] [new phone]: Change the phone number for the specified contact.
+3.  phone [name]: Show phone numbers for the specified contact.
+4.  all: Show all contacts in the address book.
+5.  add-birthday [name] [date of birth]: Add a date of birth for the specified contact.
+6.  show-birthday [name]: Show the date of birth for the specified contact.
+7.  birthdays: Show birthdays that will occur during the next week.
+8.  hello: Receive a greeting from the bot.
+9.  close or exit: Close the program.
 
-### Class AddressBook:
+```
+    def main():
+    book = AddressBook()
+    print("Welcome to the assistant bot!")
+    while True:
+    user_input = input("Enter a command: ")
+    command, \*args = parse_input(user_input)
 
-- Implemented the add_record method, which adds a record to self.data.
-- Implemented the find method, which finds a record by name.
-- Implemented the delete method, which deletes a record by name.
+            if command in ["close", "exit"]:
+                print("Good bye!")
+                break
 
-### Class Record:
+            elif command == "hello":
+                print("How can I help you?")
 
-- Implemented storage of the Name object in a separate attribute.
-- Implemented storage of the list of Phone objects in a separate attribute.
-- Implemented methods for adding - add_phone/removing - remove_phone/editing - edit_phone/searching for Phone objects - find_phone.
+            elif command == "add":
+                # implementation
 
-### Class Phone:
+            elif command == "change":
+                # implementation
 
-- Implemented phone number validation (must check for 10 digits).
+            elif command == "phone":
+                # implementation
+
+            elif command == "all":
+                # implementation
+
+            elif command == "add-birthday":
+                # implementation
+
+            elif command == "show-birthday":
+                # implementation
+
+            elif command == "birthdays":
+                # implementation
+
+            else:
+                print("Invalid command.")
+```
+
+For example, let's consider the implementation of the add [name] [phone] command. In the main function, we need to add handling of this command to the appropriate place:
+
+```
+elif command == "add":
+    print(add_contact(args, book))
+```
+
+The implementation of the add_contact function can look like this:
+
+```
+@input\*error
+def add_contact(args, book: AddressBook):
+name, phone, \*\* = args
+record = book.find(name)
+message = "Contact updated."
+if record is None:
+record = Record(name)
+book.add_record(record)
+message = "Contact added."
+if phone:
+record.add_phone(phone)
+return message
+```
+
+### Evaluation Criteria:
+
+1. Implement all specified commands for the bot.
+2. All data should be displayed in a clear and user-friendly format.
+3. All errors, such as incorrect input or missing contact, should be handled informatively with the appropriate message for the user.
+4. Data validation:
+   - The date of birth must be in the format DD.MM.YYYY.
+   - The phone number must consist of 10 digits.
+5. The program should close correctly after executing the close or exit commands.
